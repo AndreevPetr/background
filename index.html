@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulated Starry Sky</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: black;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<canvas id="starrySky"></canvas>
+
+<script>
+    const canvas = document.getElementById('starrySky');
+    const ctx = canvas.getContext('2d');
+
+    // Размеры канваса
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Создание массива звезд
+    const stars = [];
+    const numStars = 500; // Количество звезд
+
+    // Класс для представления одной звезды
+    class Star {
+        constructor() {
+            this.x = Math.random() * canvas.width; // Позиция по оси X
+            this.y = Math.random() * canvas.height; // Позиция по оси Y
+            this.size = Math.random() * 2; // Размер звезды
+            this.speed = Math.random() * 0.5 + 0.2; // Скорость движения
+            this.direction = Math.random() * 360; // Направление движения
+        }
+
+        // Метод для обновления позиции звезды
+        update() {
+            const radians = this.direction * Math.PI / 180;
+            this.x += Math.cos(radians) * this.speed;
+            this.y += Math.sin(radians) * this.speed;
+
+            // Если звезда выходит за пределы экрана, возвращаем её на другую сторону
+            if (this.x > canvas.width) this.x = 0;
+            if (this.x < 0) this.x = canvas.width;
+            if (this.y > canvas.height) this.y = 0;
+            if (this.y < 0) this.y = canvas.height;
+        }
+
+        // Метод для рисования звезды
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+        }
+    }
+
+    // Инициализация звезд
+    function createStars() {
+        for (let i = 0; i < numStars; i++) {
+            stars.push(new Star());
+        }
+    }
+
+    // Анимация
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Очистка канваса
+
+        for (let star of stars) {
+            star.update(); // Обновляем позицию
+            star.draw(); // Рисуем звезду
+        }
+
+        requestAnimationFrame(animate); // Рекурсивный вызов для плавной анимации
+    }
+
+    // Запуск симуляции
+    createStars();
+    animate();
+</script>
+</body>
+</html>
